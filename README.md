@@ -250,18 +250,24 @@ d	d1	7
 e	e1	8
 e	e1	9
 ```
-# a1:1
-# total a:1
-# b1:2
-# b2:3
-# total b:5
-# c1:9
-# c2:6
-# total c:15
-# d1:7
-# total d:7
-# e1:17
-# total e:17
+
+The result will be:
+
+```
+a1:1
+total a:1
+b1:2
+b2:3
+total b:5
+c1:9
+c2:6
+total c:15
+d1:7
+total d:7
+e1:17
+total e:17
+```
+
 ## Development
 
 

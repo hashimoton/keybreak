@@ -11,7 +11,7 @@ module Keybreak
   
   # Executes the given block with a Controller instance
   # Within the block, register your keybreak handlers and feed keys from your data
-  # Then the handlers are called for all keys including the last key
+  # Then the handlers will be called for all keys including the last key
   def execute_with_controller(&block)
       Controller.new.execute(&block)
   end

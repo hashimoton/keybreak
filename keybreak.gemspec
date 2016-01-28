@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["hashimoton"]
   spec.email         = ["nhashimoto01@gmail.com"]
 
-  spec.summary       = %q{Keybreak is a utility module for Key break processing in Ruby.}
+  spec.summary       = %q{Keybreak is a utility module for key break processing in Ruby.}
   spec.homepage      = "https://github.com/hashimoton/keybreak"
   spec.license       = "MIT"
 
