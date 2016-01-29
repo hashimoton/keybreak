@@ -8,6 +8,7 @@ Keybreak is a utility module for Key break processing in Ruby.
 
 The "key break processing" means, assuming a sorted sequence of column based records which can be grouped by a column,
 doing the same process for each group.
+
 The column used for the grouping is a "key".
 In processing the record sequence, when the key's value in a record changes from the previous record,
 it is called "key break".
@@ -160,6 +161,7 @@ e:8
 ### Print last values for each key
 
 Borrows DATA from above example.
+
 Register a keyend handler which prints the given key and value.
 
 ```ruby
@@ -215,6 +217,7 @@ e:17
 ### Print sum of values for each key and sub key
 
 Nest Keybreak.execute_with_controller.
+
 Give sub key handlers a set of primary key and sub key (an array for instance)
 so that a primary key break is also detected as a sub key break.
 
