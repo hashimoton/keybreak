@@ -54,13 +54,13 @@ describe Keybreak do
     end # context
     
     
-    context 'when user provides a keystart handler' do
+    context 'when user provides a :keystart handler' do
       
       describe '#feed' do
       
-        context 'when keybreak occurs' do
+        context 'when key break occurs' do
         
-          it 'calls the keystart handler' do
+          it 'calls the :keystart handler' do
             @c.on(:keystart) { |k| print "KEYSTART #{k}" }
             
             expect do
@@ -76,7 +76,7 @@ describe Keybreak do
             end.to output("KEYSTART 2").to_stdout
           end
           
-          it 'calls the keystart handler with an optional parameter' do
+          it 'calls the :keystart handler with an optional parameter' do
             @c.on(:keystart) { |k, v| print "KEYSTART #{k}+#{v}" }
           
             expect do
@@ -88,7 +88,7 @@ describe Keybreak do
             end.to output("KEYSTART 2+b").to_stdout
           end
         
-          it 'calls the keystart handler with optional parameters' do
+          it 'calls the :keystart handler with optional parameters' do
             @c.on(:keystart) { |k, v1, v2| print "KEYSTART #{k}+#{v1}+#{v2}" }
           
             expect do
@@ -103,7 +103,7 @@ describe Keybreak do
         end
         
         
-        it 'calls the keystart handler only when keybreak occurs' do
+        it 'calls the :keystart handler only when key break occurs' do
           @c.on(:keystart) { |k| print "#{k}" }
           
           expect do
@@ -130,7 +130,7 @@ describe Keybreak do
       
       
       describe '#execute' do
-        it 'calls the keystart handler when keybreak occurs' do
+        it 'calls the :keystart handler when key break occurs' do
           @c.on(:keyend) { |k, v| print "#{k}+#{v}"}
           
           expect do
@@ -144,10 +144,10 @@ describe Keybreak do
     end # context
    
    
-   context 'when user provides a keyend handler' do
+   context 'when user provides a :key end handler' do
       
       describe '#feed' do
-        it 'does not call the keyend handler for the first fed key' do
+        it 'does not call the :keyend handler for the first fed key' do
           @c.on(:keyend) { |k| print "KEYEND #{k}" }
           
           expect do
@@ -155,9 +155,9 @@ describe Keybreak do
           end.to output("").to_stdout
         end
         
-        context 'when keybreak occurs' do
+        context 'when key break occurs' do
         
-          it 'calls the keyend handler with the previsous key' do
+          it 'calls the :keyend handler with the previsous key' do
             @c.on(:keyend) { |k| print "KEYEND #{k}" }
             
             expect do
@@ -169,7 +169,7 @@ describe Keybreak do
             end.to output("KEYEND 1").to_stdout
           end
           
-          it 'calls the keyend handler with previous optional parameter' do
+          it 'calls the :keyend handler with previous optional parameter' do
             @c.on(:keyend) { |k, v| print "KEYEND #{k}+#{v}" }
             @c.feed(1, "a")
           
@@ -178,7 +178,7 @@ describe Keybreak do
             end.to output("KEYEND 1+a").to_stdout
           end
           
-          it 'calls the keyend handler except at the end of the last key' do
+          it 'calls the :keyend handler except at the end of the last key' do
             @c.on(:keyend) { |k| print "#{k}" }
           
             expect do
@@ -195,7 +195,7 @@ describe Keybreak do
       
       describe '#flush' do
 
-        it 'does nothing when keybreak did not occur' do
+        it 'does nothing when key break did not occur' do
           @c.on(:keyend) { |k| print "#{k}"}
           @c.feed(nil)
           
@@ -204,9 +204,9 @@ describe Keybreak do
           end.to output("").to_stdout
         end
         
-        context 'once keybreak occurred' do
+        context 'once key break occurred' do
           
-          it 'calls the keyend handler with the last key' do
+          it 'calls the :keyend handler with the last key' do
             @c.on(:keyend) { |k| print "#{k}"}
             @c.feed(1)
             
@@ -219,7 +219,7 @@ describe Keybreak do
             end.to output("2").to_stdout
           end
           
-          it 'calls the keyend handler with the last key and the last parameter' do
+          it 'calls the :keyend handler with the last key and the last parameter' do
             @c.on(:keyend) { |k, v| print "#{k}+#{v}"}
             @c.feed(1, "a")
             @c.feed(1, "b")
@@ -236,7 +236,7 @@ describe Keybreak do
         
         context 'once keybreak occurred' do
           
-          it 'calls keyend hander with the last key and the last parameter' do
+          it 'calls :keyend hander with the last key and the last parameter' do
             @c.on(:keyend) { |k, v| print "#{k}+#{v}"}
             
             expect do
@@ -253,11 +253,11 @@ describe Keybreak do
       
     end # context
     
-    context 'when user provides handlers for both keystart and keyend' do
+    context 'when user provides handlers for both :keystart and :keyend' do
       
       describe '#feed' do
         
-        it 'calls the keyend handler first, and next, calls the keystart handler' do
+        it 'calls the :keyend handler first, and next, calls the :keystart handler' do
           @c.on(:keystart) { |k, v| print "KEYSTART #{k}+#{v}"}
           @c.on(:keyend) { |k, v| print "KEYEND #{k}+#{v}"}
           
@@ -267,7 +267,7 @@ describe Keybreak do
           end.to output("KEYSTART 1+aKEYEND 1+aKEYSTART 2+b").to_stdout
         end
         
-        it 'does nothing when keybreak does not occur' do
+        it 'does nothing when key break does not occur' do
           @c.feed(1)
           @c.on(:keystart) { |k, v| print "KEYSTART #{k}+#{v}"}
           @c.on(:keyend) { |k, v| print "KEYEND #{k}+#{v}"}
@@ -281,7 +281,7 @@ describe Keybreak do
       end
       
       describe '#flush' do
-        it 'calls the keyend handler with the last key and the last parameter once keybreak occurred' do
+        it 'calls the :keyend handler with the last key and the last parameter once key break occurred' do
           @c.on(:keystart) { |k, v| print "KEYSTART #{k}+#{v}"}
           @c.on(:keyend) { |k, v| print "KEYEND #{k}+#{v}"}
           
@@ -298,7 +298,7 @@ describe Keybreak do
       
       
       describe '#execute' do
-        it 'calls the keystart handler at first keybreak and the keyend process at last' do
+        it 'calls the :keystart handler at first key break and the keyend process at last' do
           @c.on(:keystart) { |k, v| print "#{k}+#{v}"}
           @c.on(:keyend) { |k, v| print "#{k}+#{v}"}
           
@@ -314,6 +314,41 @@ describe Keybreak do
       
     end #context
     
+    
+    context 'when user provides a :detection handler' do
+      
+      
+      describe '#feed' do
+        
+        it 'can detect key break with only a key' do
+          @c.on(:detection) {|key| key > 0}
+          @c.on(:keystart) { |k, v| print "#{k}+#{v}"}  
+        
+          expect do
+            @c.feed(0, "a")
+            @c.feed(-1, "b")
+            @c.feed(0, "c")
+            @c.feed(1, "d")
+          end.to output("0+a1+d").to_stdout
+        end
+        
+        it 'receives current key and previous key' do
+          @c.on(:detection) do |key, prev_key|
+            print "#{key}+#{prev_key}"
+            key != prev_key
+          end
+        
+          expect do
+            @c.feed(1, "a")
+            @c.feed(1, "b")
+            @c.feed(2, "c")
+            @c.feed(3, "d")
+          end.to output("1+12+13+2").to_stdout
+        end
+      end
+      
+      
+    end
     
   end #class
   

@@ -11,6 +11,7 @@ module Keybreak
       @handlers = {}
       @handlers[:keystart] = DO_NOTHING
       @handlers[:keyend] = DO_NOTHING
+      @handlers[:detection] = KEY_CHANGED
     end
     
     
@@ -18,6 +19,7 @@ module Keybreak
     # Valid events are:
     #   :keystart
     #   :keyend
+    #   :detection
     def on(event, &block)
       @handlers[event] = block
     end
@@ -30,7 +32,7 @@ module Keybreak
     # Use flush() to call the :keyend handler for the last fed key.
     def feed(key, *values)
       if @is_fed
-        if key != @key
+        if @handlers[:detection].call(key, @key)
           @handlers[:keyend].call(@key, *@values)
           @key = key
           @handlers[:keystart].call(key, *values)

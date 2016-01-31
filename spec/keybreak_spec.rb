@@ -16,6 +16,16 @@ describe Keybreak do
     end
   end
   
+  describe '::KEY_CHANGED' do
+    it 'returns false when the key is equal to the previous key' do
+      expect(Keybreak::KEY_CHANGED.call(1, 1)).to be(false)
+    end
+    
+    it 'returns true when the key is equal to the previous key' do
+      expect(Keybreak::KEY_CHANGED.call(1, 2)).to be(true)
+    end
+  end
+  
   describe '.execute_with_controller' do
     it 'calls keybreak handlers including the keyend handler finally' do
       results = []

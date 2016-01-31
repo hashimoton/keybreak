@@ -1,12 +1,12 @@
 # Keybreak
 
-Keybreak is a utility module for Key break processing in Ruby.
+Keybreak is a utility module for key break processing in Ruby.
 
 ## Introduction
 
 ### Key break processing
 
-The "key break processing" means, assuming a sorted sequence of column based records which can be grouped by a column,
+The "key break processing" means, assuming a sorted sequence of records which can be grouped by a column,
 doing the same process for each group.
 
 The column used for the grouping is a "key".
@@ -19,11 +19,23 @@ it is called "key break".
 A typical key break processing is counting the number of records for each key like below:
 
 ```ruby
+RECORDS =<<EOD
+a	1
+b	2
+b	3
+c	4
+c	5
+c	6
+d	7
+e	8
+e	9
+EOD
+
 count = 0
 prev_key = nil
 
-DATA.each do |line|
-  key = line.chomp.split("\t")[0]
+RECORDS.each_line do |line|
+  key = line.split("\t")[0]
   
   if !prev_key.nil? && key != prev_key
     puts "#{prev_key}:#{count}"
@@ -37,39 +49,17 @@ end
 if !prev_key.nil?
     puts "#{prev_key}:#{count}"
 end
-
-__END__
-a	1
-b	2
-b	3
-c	4
-c	5
-c	6
-d	7
-e	8
-e	9
 ```
 
 Note that you have to write "puts" once again after the iteration.
 This is quite troublesome even for such a simple task, and is very my motivation.
 
-With Keybreak module, the code is like below:
+With Keybreak module, the code goes like below:
 
 ```ruby
 require "keybreak"
 
-Keybreak.execute_with_controller do |c, count|
-  c.on(:keystart) {count = 0}
-  c.on(:keyend) {|key| puts "#{key}:#{count}"}
-
-  DATA.each do |line|
-    key = line.chomp.split("\t")[0]
-    c.feed(key)
-    count += 1
-  end
-end
-
-__END__
+RECORDS =<<EOD
 a	1
 b	2
 b	3
@@ -79,6 +69,18 @@ c	6
 d	7
 e	8
 e	9
+EOD
+
+Keybreak.execute_with_controller do |c, count|
+  c.on(:keystart) {count = 0}
+  c.on(:keyend) {|key| puts "#{key}:#{count}"}
+
+  RECORDS.each_line do |line|
+    key = line.split("\t")[0]
+    c.feed(key)
+    count += 1
+  end
+end
 ```
 
 You need to register event handlers as a key break consists of two events:
@@ -89,7 +91,7 @@ Then call feed() in your record loop.
 The method holds current key, detects a key break, and calls the event handlers accordingly.
 The block given to execute_with_controller makes sure to process the end of the last key.
 
-In many cases, taking a functional approach such as Enumerable#map achieves the task simply.
+In many cases, taking a functional approach such as Enumerable#map, Enumerable#slice_when, etc. would achieve the task simply.
 But sometimes, a procedural code is needed.
 Keybreak module may assist you to make your key break code simpler.
 
@@ -124,19 +126,10 @@ See [examples](https://github.com/hashimoton/keybreak/tree/master/examples) for 
 
 ### Print first values for each key
 
-Register a keystart handler which prints the given key and value.
+Register a :keystart handler which prints the given key and value.
 
 ```ruby
-Keybreak.execute_with_controller do |c|
-  c.on(:keystart) {|key, value| puts "#{key}:#{value}"}
-
-  DATA.each do |line|
-    key, value = line.chomp.split("\t")
-    c.feed(key, value)
-  end
-end
-
-__END__
+RECORDS =<<EOD
 a	1
 b	2
 b	3
@@ -146,6 +139,16 @@ c	6
 d	7
 e	8
 e	9
+EOD
+
+Keybreak.execute_with_controller do |c|
+  c.on(:keystart) {|key, value| puts "#{key}:#{value}"}
+
+  RECORDS.each_line do |line|
+    key, value = line.split("\t")
+    c.feed(key, value)
+  end
+end
 ```
 
 The result will be:
@@ -160,16 +163,16 @@ e:8
 
 ### Print last values for each key
 
-Borrows DATA from above example.
+Borrows RECORDS from above example.
 
-Register a keyend handler which prints the given key and value.
+Register a :keyend handler which prints the given key and value.
 
 ```ruby
 Keybreak.execute_with_controller do |c|
   c.on(:keyend) {|key, value| puts "#{key}:#{value}"}
 
-  DATA.each do |line|
-    key, value = line.chomp.split("\t")
+  RECORDS.each_line do |line|
+    key, value = line.split("\t")
     c.feed(key, value)
   end
 end
@@ -195,8 +198,8 @@ Keybreak.execute_with_controller do |c, sum|
   c.on(:keystart) {sum = 0}
   c.on(:keyend) {|key| puts "#{key}:#{sum}"}
 
-  DATA.each do |line|
-    key, value = line.chomp.split("\t")
+  RECORDS.each_line do |line|
+    key, value = line.split("\t")
     c.feed(key)
     sum += value.to_i
   end
@@ -222,6 +225,18 @@ Give sub key handlers a set of primary key and sub key (an array for instance)
 so that a primary key break is also detected as a sub key break.
 
 ```ruby
+RECORDS =<<EOD
+a	a1	1
+b	b1	2
+b	b2	3
+c	c1	4
+c	c1	5
+c	c2	6
+d	d1	7
+e	e1	8
+e	e1	9
+EOD
+
 Keybreak.execute_with_controller do |c, sum|
   c.on(:keystart) {sum = 0}
   c.on(:keyend) {|key| puts "total #{key}:#{sum}"}
@@ -233,25 +248,14 @@ Keybreak.execute_with_controller do |c, sum|
       sum += sub_sum
     end
     
-    DATA.each do |line|
-      key, sub_key, value = line.chomp.split("\t")
+    RECORDS.each_line do |line|
+      key, sub_key, value = line.split("\t")
       sub_c.feed([key, sub_key])
       c.feed(key)
       sub_sum += value.to_i
     end
   end
 end
-
-__END__
-a	a1	1
-b	b1	2
-b	b2	3
-c	c1	4
-c	c1	5
-c	c2	6
-d	d1	7
-e	e1	8
-e	e1	9
 ```
 
 The result will be:
@@ -269,6 +273,56 @@ d1:7
 total d:7
 e1:17
 total e:17
+```
+
+### Print sum of values for each key where empty key means continuation
+
+Sometimes we face the empty keys which mean to continue the value in the previous record.
+The pivot table of MS Excel is an example.
+Keybreak module can handle this case by providing a block for detecting a keybreak.
+
+```ruby
+RECORDS =<<EOD
+a	a1	1
+b	b1	2
+	b2	3
+c	c1	4
+		5
+	c2	6
+d	d1	7
+e	e1	8
+		9
+EOD
+
+Keybreak.execute_with_controller do |c, sum|
+  c.on(:detection) {|key| !key.empty?}
+  c.on(:keystart) {sum = 0}
+  c.on(:keyend) {|key| puts "total #{key}:#{sum}"}
+ 
+  Keybreak.execute_with_controller do |sub_c, sub_sum|
+    sub_c.on(:detection) {|keys| !keys.all? {|key| key.empty?}}
+    sub_c.on(:keystart) {sub_sum = 0}
+    sub_c.on(:keyend) do |keys|
+      puts "#{keys[1]}:#{sub_sum}"
+      sum += sub_sum
+    end
+ 
+    RECORDS.each_line do |line|
+      key, sub_key, value = line.split("\t")
+      sub_c.feed([key, sub_key])
+      c.feed(key)
+      sub_sum += value.to_i
+    end
+  end
+end
+```
+
+The result will be the same as the previous example.
+
+By default, the below block is used for the key break detections.
+
+```
+{|key, prev_key| key != prev_key}
 ```
 
 ## Development

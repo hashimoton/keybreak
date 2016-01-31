@@ -10,18 +10,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require "keybreak"
 
-Keybreak.execute_with_controller do |c, sum|
-  c.on(:keystart) {sum = 0}
-  c.on(:keyend) {|key| puts "#{key}:#{sum}"}
-
-  DATA.each do |line|
-    key, value = line.chomp.split("\t")
-    c.feed(key)
-    sum += value.to_i
-  end
-end
-
-__END__
+RECORDS =<<EOD
 a	1
 b	2
 b	3
@@ -31,3 +20,17 @@ c	6
 d	7
 e	8
 e	9
+EOD
+
+Keybreak.execute_with_controller do |c, sum|
+  c.on(:keystart) {sum = 0}
+  c.on(:keyend) {|key| puts "#{key}:#{sum}"}
+
+  RECORDS.each_line do |line|
+    key, value = line.split("\t")
+    c.feed(key)
+    sum += value.to_i
+  end
+end
+
+# EOF

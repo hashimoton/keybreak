@@ -1,3 +1,10 @@
+## 0.2.0 (2016-01-31)
+
+Features:
+
+  - added :detection event
+  - rewrote all examples to read data from here document instead of DATA
+
 ## 0.1.1 (2016-01-29)
 
 Features:
