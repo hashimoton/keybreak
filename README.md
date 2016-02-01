@@ -221,8 +221,8 @@ e:17
 
 Nest Keybreak.execute_with_controller.
 
-Give sub key handlers a set of primary key and sub key (an array for instance)
-so that a primary key break is also detected as a sub key break.
+Call flush() for sub key in the :keyend handler of the key
+so that an end of key triggers an end of sub key.
 
 ```ruby
 RECORDS =<<EOD
@@ -238,20 +238,23 @@ e	e1	9
 EOD
 
 Keybreak.execute_with_controller do |c, sum|
-  c.on(:keystart) {sum = 0}
-  c.on(:keyend) {|key| puts "total #{key}:#{sum}"}
- 
   Keybreak.execute_with_controller do |sub_c, sub_sum|
+    c.on(:keystart) {sum = 0}
+    c.on(:keyend) do |key|
+      sub_c.flush
+      puts "total #{key}:#{sum}"
+    end
+  
     sub_c.on(:keystart) {sub_sum = 0}
-    sub_c.on(:keyend) do |keys|
-      puts "#{keys[1]}:#{sub_sum}"
+    sub_c.on(:keyend) do |key|
+      puts "#{key}:#{sub_sum}"
       sum += sub_sum
     end
-    
+
     RECORDS.each_line do |line|
       key, sub_key, value = line.split("\t")
-      sub_c.feed([key, sub_key])
       c.feed(key)
+      sub_c.feed(sub_key)
       sub_sum += value.to_i
     end
   end
@@ -295,22 +298,25 @@ e	e1	8
 EOD
 
 Keybreak.execute_with_controller do |c, sum|
-  c.on(:detection) {|key| !key.empty?}
-  c.on(:keystart) {sum = 0}
-  c.on(:keyend) {|key| puts "total #{key}:#{sum}"}
- 
   Keybreak.execute_with_controller do |sub_c, sub_sum|
-    sub_c.on(:detection) {|keys| !keys.all? {|key| key.empty?}}
+    c.on(:detection) {|key| !key.empty?}
+    c.on(:keystart) {sum = 0}
+    c.on(:keyend) do |key|
+      sub_c.flush
+      puts "total #{key}:#{sum}"
+    end
+  
+    sub_c.on(:detection) {|key| !key.empty?}
     sub_c.on(:keystart) {sub_sum = 0}
-    sub_c.on(:keyend) do |keys|
-      puts "#{keys[1]}:#{sub_sum}"
+    sub_c.on(:keyend) do |key|
+      puts "#{key}:#{sub_sum}"
       sum += sub_sum
     end
  
     RECORDS.each_line do |line|
       key, sub_key, value = line.split("\t")
-      sub_c.feed([key, sub_key])
       c.feed(key)
+      sub_c.feed(sub_key)
       sub_sum += value.to_i
     end
   end
