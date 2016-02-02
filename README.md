@@ -11,7 +11,7 @@ doing the same process for each group.
 
 The column used for the grouping is a "key".
 In processing the record sequence, when the key's value in a record changes from the previous record,
-it is called "key break".
+it is called "key break" (also know as ["control break"](https://en.wikipedia.org/wiki/Control_break))
 
 
 ### Motivation
