@@ -41,24 +41,25 @@ e	e1	8
 e	e1	9
 EOD
 
-Keybreak.execute_with_controller do |c|
-  Keybreak.execute_with_controller do |sub_c|
-    c.on(:keystart) {|key| puts "#{key} START"}
-    c.on(:keyend) do |key|
-      sub_c.flush
-      puts "#{key} END"
-    end
-  
-    sub_c.on(:keystart) {|key| puts "  #{key} START"}
-    sub_c.on(:keyend) do |key|
-      puts "  #{key} END"
-    end
+c = Keybreak::Controller.new
+sub_c = Keybreak::Controller.new
 
-    RECORDS.each_line do |line|
-      key, sub_key, value = line.split("\t")
-      c.feed(key)
-      sub_c.feed(sub_key)
-    end
+c.on(:keystart) {|key| puts "#{key} START"}
+c.on(:keyend) do |key|
+  sub_c.flush
+  puts "#{key} END"
+end
+
+sub_c.on(:keystart) {|key| puts "  #{key} START"}
+sub_c.on(:keyend) do |key|
+  puts "  #{key} END"
+end
+
+c.execute do
+  RECORDS.each_line do |line|
+    key, sub_key, value = line.split("\t")
+    feed(key)
+    sub_c.feed(sub_key)
   end
 end
 
