@@ -93,7 +93,7 @@ The block given to execute_with_controller makes sure to process the end of the 
 
 In many cases, taking a functional approach such as Enumerable#map, Enumerable#slice_when, etc. would achieve the task simply.
 But sometimes, a procedural code is needed.
-Keybreak module may assist you to make your key break code simpler.
+Keybreak module may assist you to make your key break processing code simpler.
 
 
 ## Installation

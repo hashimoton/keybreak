@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["nhashimoto01@gmail.com"]
 
   spec.summary       = %q{Keybreak is a utility module for key break processing in Ruby.}
+  spec.description   = %q{Keybreak module may assist you to make your key break processing code simpler.}
   spec.homepage      = "https://github.com/hashimoton/keybreak"
   spec.license       = "MIT"
 
