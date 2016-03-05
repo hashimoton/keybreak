@@ -44,16 +44,14 @@ EOD
 c = Keybreak::Controller.new
 sub_c = Keybreak::Controller.new
 
-c.on(:keystart) {|key| puts "#{key} START"}
-c.on(:keyend) do |key|
-  sub_c.flush
-  puts "#{key} END"
-end
+c.on(:keystart) {|key| puts "#{key} START"}.
+  on(:keyend) do |key|
+    sub_c.flush
+    puts "#{key} END"
+  end
 
-sub_c.on(:keystart) {|key| puts "  #{key} START"}
-sub_c.on(:keyend) do |key|
-  puts "  #{key} END"
-end
+sub_c.on(:keystart) {|key| puts "  #{key} START"}.
+  on(:keyend) {|key| puts "  #{key} END" }
 
 c.execute do
   RECORDS.each_line do |line|

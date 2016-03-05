@@ -1,3 +1,9 @@
+## 0.3.0 (2016-03-05)
+
+Features:
+
+  - defined the return value of Controller#on as self instance
+
 ## 0.2.0 (2016-01-31)
 
 Features:

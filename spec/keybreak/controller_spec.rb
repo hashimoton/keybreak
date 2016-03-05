@@ -131,7 +131,7 @@ describe Keybreak do
       
       describe '#execute' do
         it 'calls the :keystart handler when key break occurs' do
-          @c.on(:keyend) { |k, v| print "#{k}+#{v}"}
+          @c.on(:keystart) { |k, v| print "#{k}+#{v}"}
           
           expect do
             @c.execute do
@@ -141,10 +141,20 @@ describe Keybreak do
           end.to output("1+a2+b").to_stdout
         end
       end
+      
+      
+      describe '#on' do
+        it 'returns the instance itself' do
+          expect(@c.on(:keystart) { |k, v| print "#{k}+#{v}"}).to eq(@c)
+        end
+      end
+      
     end # context
-   
-   
-   context 'when user provides a :key end handler' do
+    
+    
+    
+    
+    context 'when user provides a :keyend handler' do
       
       describe '#feed' do
         it 'does not call the :keyend handler for the first fed key' do
@@ -250,6 +260,14 @@ describe Keybreak do
         end #context
       
       end
+      
+      
+      describe '#on' do
+        it 'returns the instance itself' do
+          expect(@c.on(:keyend) { |k, v| print "#{k}+#{v}"}).to eq(@c)
+        end
+      end
+      
       
     end # context
     

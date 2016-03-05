@@ -20,8 +20,10 @@ module Keybreak
     #   :keystart
     #   :keyend
     #   :detection
+    # Returns self instance so that registrations can be chained.
     def on(event, &block)
       @handlers[event] = block
+      return self
     end
     
     
