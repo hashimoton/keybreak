@@ -2,6 +2,7 @@
 
 Keybreak is a utility module for key break processing in Ruby.
 
+
 ## Introduction
 
 ### Key break processing
@@ -98,6 +99,8 @@ Keybreak module may assist you to make your key break processing code simpler.
 
 ## Installation
 
+The gem is available on [Rubygems.org](https://rubygems.org/gems/keybreak).
+
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -120,6 +123,7 @@ In your ruby source, write the line below:
 ```ruby
 require "keybreak"
 ```
+
 
 Here are some examples of typical key break processing.
 See [examples](https://github.com/hashimoton/keybreak/tree/master/examples) for full code.
